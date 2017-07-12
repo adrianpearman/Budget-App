@@ -15,13 +15,41 @@ var budgetController = (function(){
 
 
   var data = {
-    allItems:{
-      allExpenses = [],
-      allIncomes = []
+    allItems: {
+      exp: [],
+      inc: []
     },
     totals: {
       exp: 0,
       inc: 0
+    }
+  };
+
+  return{
+    addItem: function(type, des, val){
+      var newItem
+
+      if (data.allItems[type].length > 0) {
+        ID = data.allItems[type][data.allItems[type].length-1].id+1;
+      }else{
+        ID = 0;
+      }
+
+      // Create new item based on value
+      if (type === 'exp'){
+        newItem = new Expense(ID, des, val);
+      }else if (type === 'inc') {
+        newItem = new Income(ID, des, val);
+      }
+
+      // Push value into our data structure.
+      data.allItems[type].push(newItem);
+
+      // Return new Object
+      return newItem;
+    },
+    testing: function(){
+      console.log(data);
     }
   }
 
@@ -34,7 +62,9 @@ var UIController = (function(){
       inputType: '.add__type',
       inputDescription: '.add__description',
       inputValue: '.add__value',
-      inputButton: '.add__btn'
+      inputButton: '.add__btn',
+      incomeContainer: '.income__list',
+      expensesContainer: '.expenses__list'
     }
   return{
     getinput: function(){
@@ -43,6 +73,26 @@ var UIController = (function(){
       description: document.querySelector(DOMstrings.inputDescription).value,
       value: document.querySelector(DOMstrings.inputValue).value
       };
+    },
+    addListItem: function(obj, type){
+      var html, newHTML, element
+      // Create HTML string with placeholder text
+      if (type === 'inc') {
+        element = DOMstrings.incomeContainer
+        html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+      } else if (type === 'exp') {
+        element = DOMstrings.expensesContainer
+        html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+      }
+
+      // Replace the placeholder text with some actual data
+
+      newHTML = html.replace('%id%', obj.id);
+      newHTML = newHTML.replace('%description%', obj.description);
+      newHTML = newHTML.replace('%value%', obj.value);
+
+      // insert the HTML into the DOM
+      document.querySelector(element).insertAdjacentHTML('beforeend', newHTML)
     },
     getDOMstrings: function(){
       return DOMstrings;
@@ -68,10 +118,13 @@ var UIController = (function(){
 
 
     var ctrlAddItem = function(){
+      var input, newItem;
       // Get the filled input data
-      var input = UICtrl.getinput();
+      input = UICtrl.getinput();
       // add the item to the budget controller
+      newItem = budgetCtrl.addItem(input.type, input.description, input.value);
       // add the item to the ui
+      UICtrl.addListItem(newItem, input.type)
       // calculate the budget
       // display the budget on the ui
 
