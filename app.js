@@ -293,14 +293,14 @@ var controller = (function(budgetCtrl, UICtrl){
     var percentages = budgetController.getPercentage()
     // 3 - Update the UI with the new percentages
     UIController.displayPercentages(percentages)
-    console.log(percentages);
+    // console.log(percentages);
   }
 
   var ctrlAddItem = function(){
     var input, newItem
     // 1 - Get the filed input data
     input = UICtrl.getInput();
-    console.log(input);
+    // console.log(input);
     // Validations to prevent unwanted values added to the database
     if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
         // 2 - Add the item to the budget controller
